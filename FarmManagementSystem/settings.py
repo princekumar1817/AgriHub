@@ -21,6 +21,8 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "farm-management-system-47wm.onrender.com",
+    'agrihub-emkd.onrender.com'
+
 ]
 
 # Application definition
