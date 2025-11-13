@@ -1,155 +1,190 @@
-{%extends 'homepage/base.html' %}
+{% extends 'homepage/base.html' %}
+{% load static %}
+
 {% block content %}
-<head>
-    <style>
-          body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+<style>
+  :root{
+    --accent:#16a34a;
+    --accent-2:#10b981;
+    --muted:#6b7280;
+    --card-bg: rgba(255,255,255,0.96);
+    --glass: rgba(255,255,255,0.70);
   }
 
-  h1 {
-    color: #333;
-    text-align: center;
-    background-color: antiquewhite;
+  /* HERO / BACKGROUND */
+  .employees-hero {
+    background-image: url('https://img-cdn.krishijagran.com/40838/horticulture-in-india.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 48px 0 68px;
+    margin-bottom: 30px;
+    overflow: hidden;
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  /* subtle dark gradient so white text pops */
+  .employees-hero::before {
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.28));
+    z-index:0;
   }
 
-  th,
-  td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
+  .hero-inner{
+    position:relative; z-index:1;
+    max-width:1200px; margin:0 auto; padding:0 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    flex-wrap:wrap;
   }
 
-  th {
-    background-color: #4caf50;
-    color: white;
+  .hero-title{
+    color:#fff; font-size:34px; font-weight:800; margin:0 0 6px;
+    letter-spacing:-0.3px;
+  }
+  .hero-sub{
+    color: rgba(255,255,255,0.9); margin:0; font-size:15px;
   }
 
-  tr:nth-child(even) {
-    background-color: #f2f2f2;
+  /* GLASS STAT */
+  .hero-stat {
+    min-width:160px; text-align:center;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+    border-radius:12px; padding:14px 18px; color:#fff;
+    border:1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 10px 30px rgba(5,20,10,0.18);
+  }
+  .hero-stat .num { font-size:28px; font-weight:800; color: var(--accent-2); display:block; }
+  .hero-stat .label { display:block; color: rgba(255,255,255,0.92); margin-top:4px; font-size:13px; }
+
+  /* main wrapper */
+  .employees-wrapper { max-width:1200px; margin: 18px auto 90px; padding:0 20px; }
+
+  /* table card */
+  .table-card {
+    background: var(--card-bg);
+    border-radius:14px;
+    padding:20px;
+    box-shadow: 0 12px 36px rgba(13,30,22,0.06);
+    border:1px solid rgba(12,30,18,0.03);
   }
 
-  .update-link,
-  .delete-link {
-    display: inline-block;
-    padding: 5px 10px;
-    text-decoration: none;
-    color: #fff;
-    border-radius: 3px;
-    margin-right: 5px;
+  .table-head {
+    display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;
   }
+  .table-head h3 { margin:0; font-size:20px; color:#0f5132; font-weight:800; }
 
-  .update-link {
-    background-color: #3498db;
+  .btn-add {
+    display:inline-block; padding:10px 14px; border-radius:10px;
+    background: linear-gradient(90deg,var(--accent), var(--accent-2));
+    color:#fff; font-weight:700; text-decoration:none;
+    box-shadow: 0 10px 22px rgba(16,185,129,0.12);
   }
+  .btn-add:hover{ transform:translateY(-1px); }
 
-  .delete-link {
-    background-color: #e74c3c;
+  /* table */
+  .table-wrap{ overflow-x:auto; border-radius:10px; margin-top:6px; }
+  table.employees{
+    width:100%; border-collapse:collapse; min-width:860px; font-size:14px;
   }
+  table.employees thead th{
+    background: var(--accent); color:#fff; text-align:left; padding:12px 14px; font-weight:700; font-size:14px;
+    border-top-left-radius:8px; border-top-right-radius:8px;
+  }
+  table.employees tbody td{
+    background:#fff; padding:14px; border-bottom: 1px solid #eef2f2; vertical-align:middle;
+  }
+  table.employees tbody tr:nth-child(even) td{ background: #fbfdfb; }
 
-  .add-button {
-    display: inline-block;
-    padding: 10px;
-    background-color: #4caf50;
-    color: white;
-    text-decoration: none;
-    border-radius: 3px;
-    margin-top: 20px;
+  .badge {
+    display:inline-block; padding:6px 10px; border-radius:8px; font-weight:700; color:#fff; font-size:13px;
   }
-  
-  .update-link,
-  .delete-link {
-    display: inline-block;
-    padding: 5px 10px;
-    text-decoration: none;
-    color: #fff;
-    border-radius: 3px;
-    margin-right: 5px;
-  }
+  .badge.good{ background: var(--accent-2); }
+  .badge.neutral{ background:#6b7280; }
 
-  .update-link {
-    background-color: #3498db;
-  }
+  /* action buttons */
+  .action-btn { display:inline-block; padding:8px 11px; border-radius:8px; color:#fff; font-weight:700; text-decoration:none; margin-right:8px; font-size:13px; }
+  .action-update{ background: linear-gradient(90deg,#3b82f6,#2563eb); }
+  .action-delete{ background: linear-gradient(90deg,#f97316,#ef4444); }
 
-  .delete-link {
-    background-color: #e74c3c;
-  }
+  /* empty state */
+  .empty { text-align:center; padding:26px; color:var(--muted); }
 
-  .add-button {
-    display: inline-block;
-    padding: 10px;
-    background-color: #4caf50;
-    color: white;
-    text-decoration: none;
-    border-radius: 3px;
-    margin-top: 20px;
+  /* responsive */
+  @media (max-width:880px){
+    .hero-inner { flex-direction:column; text-align:center; }
+    .hero-stat { width:100%; }
+    table.employees thead { display:none; }
+    table.employees tbody td { display:block; width:100%; box-sizing:border-box; }
+    table.employees tbody td::before { content: attr(data-label); display:block; font-weight:700; margin-bottom:6px; color:#374151; }
+    .table-card{ padding:14px; }
+    .btn-add{ width:100%; text-align:center; display:block; margin-top:8px; }
   }
-  
-  .expenses-link {
-    display: inline-block;
-    padding: 5px 10px;
-    margin: 5px;
-    text-align: center;
-    text-decoration: none;
-    border: 2px solid #3498db;
-    color: #3498db;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  
-  .expenses-link:hover {
-    background-color: #3498db;
-    color: #fff;
-  }
-    </style>
-</head>
-<body>
-    <h1>Employees Details</h1>
-    {% if employees %}
-    <table>
+</style>
+
+<!-- HERO -->
+<section class="employees-hero" aria-label="Employees overview">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-title">Employees Directory</div>
+      <div class="hero-sub">All your workforce information in one place — easy to manage, simple to review.</div>
+    </div>
+
+    <div class="hero-stat" role="status" aria-live="polite">
+      <span class="num">{{ employees.count }}</span>
+      <small>Total Employees</small>
+    </div>
+  </div>
+</section>
+
+<!-- TABLE -->
+<div class="employees-wrapper">
+  <div class="table-card">
+    <div class="table-head">
+      <h3>Employees list</h3>
+      <a href="{% url 'homepage:add-employees' %}" class="btn-add">+ Add Employee</a>
+    </div>
+
+    <div class="table-wrap" role="table">
+      {% if employees %}
+      <table class="employees" role="grid" aria-label="Employees table">
         <thead>
-            <tr>
-                <th>Employees ID</th>
-                <th>Name</th>
-                <th>Country code</th>
-                <th>Phone number</th>
-                <th>Position</th>
-                <th>Salary</th>
-                <th>Performance</th>
-                <th>Actions</th>
-            </tr>
+          <tr>
+            <th>ID</th><th>Name</th><th>Country</th><th>Phone</th><th>Position</th><th>Salary</th><th>Performance</th><th>Actions</th>
+          </tr>
         </thead>
         <tbody>
-            {% for employee in employees %}
-            <tr>
-                <td>{{ employee.Eid }}</td>
-                <td>{{ employee.Name }}</td>
-                <td>{{ employee.Country_code }}</td>
-                <td>{{ employee.Phone_number }}</td>
-                <td>{{ employee.Position }}</td>
-                <td>{{ employee.Salary }}</td>
-                <td>{{ employee.Performance }}</td>
+          {% for emp in employees %}
+          <tr>
+            <td data-label="ID">{{ emp.Eid }}</td>
+            <td data-label="Name">{{ emp.Name }}</td>
+            <td data-label="Country">{{ emp.Country_code }}</td>
+            <td data-label="Phone">{{ emp.Phone_number }}</td>
+            <td data-label="Position">{{ emp.Position }}</td>
+            <td data-label="Salary">{{ emp.Salary }}</td>
+            <td data-label="Performance">
+              {% if emp.Performance %}
+                <span class="badge good">{{ emp.Performance }}</span>
+              {% else %}
+                <span class="badge neutral">-</span>
+              {% endif %}
+            </td>
+            <td data-label="Actions">
+              <a href="{% url 'homepage:update-employees' emp.Eid %}" class="action-btn action-update">Update</a>
 
-                <td><a href="{% url 'homepage:update-employees' Eid=employee.Eid %}" class="update-link">Update</a>
-                  <a href="{% url 'homepage:delete-employees' Eid=employee.Eid %}"class="delete-link">Delete</a> </td>
-
-            </tr>
-            {% endfor %}
+              <form method="post" action="{% url 'homepage:delete-employees' emp.Eid %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="action-btn action-delete" onclick="return confirm('Delete this employee?')">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
         </tbody>
-    </table>
-
-    {% else %}
-    <p class="no-employees">No employees found. Please add employees</p>
-    {% endif %}
-
-    <a href="{% url 'homepage:add-employees' %}" class="add-button">Add an employee</a>
-</body>
-{%endblock%}
+      </table>
+      {% else %}
+        <div class="empty">No employees found. <a href="{% url 'homepage:add-employees' %}">Add the first employee</a>.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

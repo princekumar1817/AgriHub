@@ -1,2 +1,27 @@
-farmer.db
-myenv/
+# Python
+__pycache__/
+*.py[cod]
+*.py~ 
+*.pyo
+*.pyd
+env/
+venv/
+venv311/
+.venv
+
+# VSCode
+.vscode/
+
+# Pyenv
+.python-version
+
+# Django / misc
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+.DS_Store
+
+# env files
+.env
+.env.*

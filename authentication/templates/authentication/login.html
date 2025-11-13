@@ -1,86 +1,106 @@
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-    <meta charset="UTF-8">  
-    <title>Index</title>
-    {%load static%}  
-  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login — AgriHub</title>
+  {% load static %}
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --accent-1:#0f766e; --accent-2:#10b981; --card-bg:rgba(255,255,255,0.88);
+      --muted:#586069; --radius:14px; --shadow:0 18px 40px rgba(8,30,23,0.18);
+      font-family: "Inter", "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    html,body{height:100%;margin:0;}
+    body{
+      display:flex; align-items:center; justify-content:center; padding:28px;
+      background-image:url('https://media.istockphoto.com/id/1458688223/photo/tracking-shot-happy-farmer-talking-on-mobile-phone-while-carrying-basket-of-vegetables-at.jpg?s=612x612&w=0&k=20&c=cqq9n3q4p6n74yIGCnmzBz4Jh8T9xsX1eF0X-ByWYJ8=');
+      background-size:cover; background-position:center; background-attachment:fixed;
+      -webkit-font-smoothing:antialiased;
+    }
+    .bg-overlay{position:fixed;inset:0;background:linear-gradient(0deg, rgba(0,0,0,0.20), rgba(0,0,0,0.08)); z-index:0; pointer-events:none;}
+    .card{
+      z-index:1; width:100%; max-width:640px; border-radius:var(--radius);
+      padding:28px; background:var(--card-bg); box-shadow:var(--shadow); border:1px solid rgba(16,30,24,0.06);
+      backdrop-filter: blur(6px) saturate(110%); transition:transform .28s ease;
+    }
+    .card:hover{ transform: translateY(-6px); }
+    .top{display:flex;align-items:center;gap:14px;flex-direction:column;justify-content:center;margin-bottom:6px;}
+    .top img{ width:86px; height:86px; object-fit:contain; }
+    .title{ font-size:30px; color:var(--accent-1); font-weight:800; margin:6px 0 0; text-align:center;}
+    .subtitle{ color:var(--muted); font-size:14px; margin-top:4px; text-align:center;}
+    form{ margin-top:14px; }
+    .field{ margin-bottom:14px; }
+    .label{ font-weight:700; color:#254136; font-size:13px; margin-bottom:6px; display:block; }
+    .input-wrap{ display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:10px;
+                 background:#fff; border:1px solid rgba(15,118,110,0.10); transition:box-shadow .18s, border-color .18s; }
+    .input-wrap:focus-within{ box-shadow: 0 8px 26px rgba(16,165,140,0.08); border-color: rgba(16,165,140,0.22); }
+    .input-wrap i{ color:var(--accent-1); font-size:18px; width:26px; text-align:center; }
+    .input-wrap input{ border:0; outline:0; width:100%; font-size:15px; padding:10px 6px; background:transparent; color:#0b332b; }
+    .pwd-toggle{ background:transparent; border:0; cursor:pointer; color:var(--accent-1); font-size:18px; padding:6px; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; padding:12px 18px; border-radius:10px; font-weight:700; cursor:pointer; border:0; }
+    .btn-primary{ background: linear-gradient(90deg,var(--accent-1),var(--accent-2)); color:#fff; box-shadow:0 12px 30px rgba(16,165,140,0.14); width:100%; font-size:16px; }
+    .help{ text-align:center; margin-top:12px; color:var(--muted); }
+    .help a{ color:var(--accent-1); text-decoration:none; font-weight:700; }
+    .msg-error{ background: rgba(255, 62, 62, 0.06); color:#9b1d1d; padding:10px; border-radius:10px; margin-bottom:12px; text-align:center; }
+    @media (max-width:720px){ .card{ max-width:420px; padding:22px; } .title{ font-size:24px; } }
+  </style>
+</head>
+<body>
+  <div class="bg-overlay" aria-hidden="true"></div>
 
-    <style>
-        body{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 90vh;
-            /*background-color: #C8E6C9;*/
-            font-family: Arial, sans-serif;
-            background-image: url('/static/images/we.jpg');
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-size: cover;
-          }
-          .container {
-              width: 500px;
-              height: 400px;
-              margin: 0 auto;
-              padding: 20px;
-              background-color: #FFF8DC;
-              border-radius: 5px;
-              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-            .thehead {
-              text-align: center;
-              margin-bottom: 20px;
-              align-items: center;
-              justify-content: center;
-            }
-          .container input[type="text"],
-          .container input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            border: 1px solid dodgerblue;
-          }
-          .container input[type="submit"] {
-              width: 100%;
-              padding: 10px;
-              background-color: #4caf50;
-              color: #fff;
-              border: none;
-              border-radius: 3px;
-              cursor: pointer;
-          }
-          .container input[type="submit"]:hover {
-              background-color: #45a049;
-              color: white;
-            }
-          
-    </style>
-</head>  
-<body>  
- <div class=container>
-  <div class="thehead">
-  <h1>LOGIN PAGE</h1> 
-  <img src="{% static 'images/logo.png' %}" alt="Logo" width="150" height="90">
+  <div class="card" role="main" aria-labelledby="login-title">
+    <div class="top">
+      <img src="https://static.vecteezy.com/system/resources/thumbnails/045/593/283/small/farm-logo-symbol-illustration-design-free-vector.jpg" alt="AgriHub">
+      <div class="title" id="login-title">LOGIN</div>
+      <div class="subtitle">Sign in to your AgriHub account</div>
+    </div>
+
+    <form method="post" action="">
+      {% csrf_token %}
+
+      {% if error_message %}
+        <div class="msg-error">{{ error_message }}</div>
+      {% endif %}
+
+      <div class="field">
+        <label class="label">User Name:</label>
+        <div class="input-wrap">
+          <i class='bx bx-user'></i>
+          <input name="fname" type="text" placeholder="Enter username" required autocomplete="username">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Password:</label>
+        <div class="input-wrap">
+          <i class='bx bx-lock-alt'></i>
+          <input id="pwd" name="pwd" type="password" placeholder="Enter password" required autocomplete="current-password">
+          <button type="button" class="pwd-toggle" onclick="togglePwd('pwd','icon')" aria-label="Toggle password">
+            <i id="icon" class='bx bx-show'></i>
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top:6px;">
+        <button type="submit" class="btn btn-primary">Login</button>
+      </div>
+
+      <div class="help">
+        Don't have an account? <a href="{% url 'authentication:register' %}">Register</a>
+      </div>
+    </form>
   </div>
-  <form action="" method=POST>
-    {% csrf_token %}
-    {% if error_message %}
-    <p style="color: red;">{{ error_message }}</p>
-    {% endif %}
-    <label for="fname">User Name:</label>   
-    <input type="text" placeholder="User Name" name='fname' required> <br>
 
-    <label for ="fname">Password</label>
-    <input type="password" placeholder="input the correct password" name='pwd' required>  <br>
-
-    
-    <input type="submit" value="Login">
-    <p>dont have an account?<a href="{% url 'authentication:register' %}">Register</a></p>
-  </form>
- </div>
-</body>  
-</html> 
+<script>
+  function togglePwd(fieldId, iconId){
+    const f = document.getElementById(fieldId);
+    const icon = document.getElementById(iconId);
+    if(!f) return;
+    if(f.type === 'password'){ f.type = 'text'; icon.className = 'bx bx-hide'; }
+    else { f.type = 'password'; icon.className = 'bx bx-show'; }
+  }
+</script>
+</body>
+</html>

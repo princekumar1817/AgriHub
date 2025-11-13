@@ -1,72 +1,203 @@
-{%extends 'homepage/base.html' %}
-{%block content%}
-    <head>
-        <title>add Employee</title>
-        {%load static%}  
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            margin: 0;
-        }
-        
-        h1{
-            text-align: center;
-            color: #333;
-        }
-        
-        form {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            padding: 20px;
-            margin-top: 20px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        input[type="text"],
-        input[type="date"],
-        input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-        }
-        
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-        </style>
-    </head>
-    
-    <body>
-        
-        <form method="POST" action={%url 'homepage:add-employees'%}>
-            <h1>Add Employee</h1>
-            {%csrf_token%}
-            {{form.as_p}}
-            <input type="submit" value="add">
-        </form>
-    </body>
-    {%endblock%}
+{% extends 'homepage/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  /* Page layout */
+  .form-page {
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: linear-gradient(180deg, rgba(250,251,252,1), rgba(244,246,247,1));
+  }
+
+  /* Card */
+  .form-card {
+    width: 100%;
+    max-width: 520px;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 28px 28px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(8, 20, 30, 0.03);
+  }
+
+  .form-card h2 {
+    margin: 0 0 18px;
+    text-align: center;
+    font-size: 26px;
+    letter-spacing: -0.2px;
+    color: #0b1720;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    text-align:center;
+    color: #55606a;
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  /* Field row */
+  .field {
+    margin-bottom: 14px;
+  }
+  .field label {
+    display: block;
+    font-weight: 600;
+    color: #1f2a2b;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="tel"],
+  .field input[type="email"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e6e9eb;
+    font-size: 14px;
+    color: #092026;
+    outline: none;
+    transition: box-shadow .12s ease, border-color .12s ease, transform .08s;
+    background: #fff;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    box-shadow: 0 8px 20px rgba(14,119,108,0.08);
+    border-color: #0ea5a4;
+    transform: translateY(-1px);
+  }
+
+  .help-text {
+    font-size: 12px;
+    color: #6e7a80;
+    margin-top: 6px;
+  }
+
+  .field-error {
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: 6px;
+  }
+
+  /* Buttons */
+  .actions {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:flex-start;
+    margin-top: 16px;
+  }
+  .btn {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:10px 16px;
+    border-radius:10px;
+    border: none;
+    cursor:pointer;
+    font-weight:700;
+    color: #fff;
+    background: linear-gradient(180deg,#10b981,#059669);
+    box-shadow: 0 10px 24px rgba(16,185,129,0.14);
+    transition: transform .12s ease, box-shadow .12s ease;
+    font-size: 14px;
+  }
+  .btn:hover { transform: translateY(-3px); }
+
+  .btn.secondary {
+    background: transparent;
+    color: #0f1720;
+    border: 1px solid rgba(15,23,34,0.06);
+    box-shadow: none;
+    font-weight:600;
+  }
+
+  /* small screens */
+  @media (max-width:560px){
+    .form-card { padding: 20px; border-radius: 12px; }
+    .btn { width:100%; }
+    .actions { flex-direction: column; align-items:stretch; }
+  }
+</style>
+
+<section class="form-page" aria-labelledby="add-employee-title">
+  <div class="form-card" role="region" aria-label="Add Employee form">
+    <h2 id="add-employee-title">Add Employee</h2>
+    <p class="subtitle">Add a new team member. All fields marked required must be filled.</p>
+
+    <!-- show non-field errors -->
+    {% if form.non_field_errors %}
+      <div class="field-error">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {# Render fields one-by-one so helpers/errors show inline #}
+      <div class="field">
+        <label for="{{ form.Eid.id_for_label }}">Eid</label>
+        {{ form.Eid }}
+        {% if form.Eid.help_text %}<div class="help-text">{{ form.Eid.help_text }}</div>{% endif %}
+        {% if form.Eid.errors %}<div class="field-error">{{ form.Eid.errors }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.Name.id_for_label }}">Name</label>
+        {{ form.Name }}
+        {% if form.Name.help_text %}<div class="help-text">{{ form.Name.help_text }}</div>{% endif %}
+        {% if form.Name.errors %}<div class="field-error">{{ form.Name.errors }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.Country_code.id_for_label }}">Country code</label>
+        {{ form.Country_code }}
+        {% if form.Country_code.help_text %}<div class="help-text">{{ form.Country_code.help_text }}</div>{% endif %}
+        {% if form.Country_code.errors %}<div class="field-error">{{ form.Country_code.errors }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.Phone_number.id_for_label }}">Phone number</label>
+        {{ form.Phone_number }}
+        {% if form.Phone_number.help_text %}<div class="help-text">{{ form.Phone_number.help_text }}</div>{% endif %}
+        {% if form.Phone_number.errors %}<div class="field-error">{{ form.Phone_number.errors }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.Position.id_for_label }}">Position</label>
+        {{ form.Position }}
+        {% if form.Position.help_text %}<div class="help-text">{{ form.Position.help_text }}</div>{% endif %}
+        {% if form.Position.errors %}<div class="field-error">{{ form.Position.errors }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.Salary.id_for_label }}">Salary</label>
+        {{ form.Salary }}
+        {% if form.Salary.help_text %}<div class="help-text">{{ form.Salary.help_text }}</div>{% endif %}
+        {% if form.Salary.errors %}<div class="field-error">{{ form.Salary.errors }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.Performance.id_for_label }}">Performance</label>
+        {{ form.Performance }}
+        {% if form.Performance.help_text %}<div class="help-text">{{ form.Performance.help_text }}</div>{% endif %}
+        {% if form.Performance.errors %}<div class="field-error">{{ form.Performance.errors }}</div>{% endif %}
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn">Add employee</button>
+        <a href="{% url 'homepage:show-employees' %}" class="btn secondary" role="button">Back to list</a>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

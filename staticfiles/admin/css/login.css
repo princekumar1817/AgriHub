@@ -1,61 +1,133 @@
-/* LOGIN FORM */
-
-.login {
-    background: var(--darkened-bg);
-    height: auto;
-}
-
-.login #header {
-    height: auto;
-    padding: 15px 16px;
+/* Full background image */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
     justify-content: center;
+    align-items: center;
+
+    background-image: url("https://media.istockphoto.com/id/1458688223/photo/tracking-shot-happy-farmer-talking-on-mobile-phone-while-carrying-basket-of-vegetables-at.jpg?s=612x612&w=0&k=20&c=cqq9n3q4p6n74yIGCnmzBz4Jh8T9xsX1eF0X-ByWYJ8=");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: "Poppins", sans-serif;
 }
 
-.login #header h1 {
-    font-size: 1.125rem;
-    margin: 0;
-}
-
-.login #header h1 a {
-    color: var(--header-link-color);
-}
-
-.login #content {
-    padding: 20px 20px 0;
-}
-
-.login #container {
-    background: var(--body-bg);
-    border: 1px solid var(--hairline-color);
-    border-radius: 4px;
-    overflow: hidden;
-    width: 28em;
-    min-width: 300px;
-    margin: 100px auto;
-    height: auto;
-}
-
-.login .form-row {
-    padding: 4px 0;
-}
-
-.login .form-row label {
-    display: block;
-    line-height: 2em;
-}
-
-.login .form-row #id_username, .login .form-row #id_password {
-    padding: 8px;
+/* Dark slight overlay for readability */
+.bg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    box-sizing: border-box;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(2px);
 }
 
-.login .submit-row {
-    padding: 1em 0 0 0;
-    margin: 0;
+/* Card */
+.login-card {
+    position: relative;
+    width: 420px;
+    background: rgba(255,255,255,0.92);
+    padding: 30px 35px;
+    border-radius: 16px;
+    box-shadow: 0px 25px 60px rgba(0,0,0,0.25);
+    z-index: 5;
+    animation: slideIn 0.6s ease;
+}
+
+/* Logo styling */
+.logo img {
+    display: block;
+    width: 85px;
+    height: 85px;
+    margin: 0 auto 10px;
+}
+
+h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 0;
+    font-weight: bold;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Input box */
+.input-box {
+    position: relative;
+    margin-bottom: 15px;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    padding: 10px 12px;
+    border: 1px solid #c8c8c8;
+}
+
+.input-box input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 15px;
+}
+
+.input-box i {
+    font-size: 20px;
+    margin-right: 10px;
+    color: #009879;
+}
+
+/* Login button */
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #06b47a, #00945c);
+    border: none;
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.2s ease;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Error message */
+.error {
+    color: #d60000;
+    font-size: 14px;
+    margin-bottom: 10px;
     text-align: center;
 }
 
-.login .password-reset-link {
+/* Register text */
+.register-text {
     text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.register-text a {
+    color: #0a8f6a;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.register-text a:hover {
+    text-decoration: underline;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
 }

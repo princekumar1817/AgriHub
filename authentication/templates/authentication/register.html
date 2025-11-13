@@ -1,91 +1,334 @@
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-    <meta charset="UTF-8">  
-    <title>Index</title> 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Register — AgriHub</title>
+  {% load static %}
 
-    <style>body{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        /*background-color: #C8E6C9;*/
-        font-family: Arial, sans-serif;
-        background-image: url('/static/images/lmn.jpg');
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-size: cover;
+  <!-- boxicons for icons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <style>
+    /* ---------- Page / background ---------- */
+    :root{
+      --accent-1: #0f766e;
+      --accent-2: #10b981;
+      --card-bg: rgba(255,255,255,0.85);
+      --muted: #586069;
+      --shadow: 0 18px 40px rgba(8,30,23,0.18);
+      --radius: 14px;
+      font-family: "Inter", "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     }
-    .form{
-        background-color: #FFF8DC;
-        padding: 0px;
-        height: 600px;
-        width: 600px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        border-radius: 10px;
+
+    html,body{
+      height:100%;
+      margin:0;
     }
-    .error {
-        color: red;
-        font-size: 14px;
-        margin-top: 5px;
-      }
-    input{
-        margin: 15px;
-        padding: 15px;
-        width: 400px;
-        border-radius: 5px;
-        border: 1px solid dodgerblue;
+
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+      /* keep the background you already use — replace URL below if needed */
+      background-image: url('https://thumbs.dreamstime.com/b/wooden-barrel-contains-mix-fresh-vegetables-tomatoes-onions-soil-healthy-fertile-land-perfect-backdrop-farm-market-produce-367499459.jpg');
+      background-size: cover;
+      background-position:center;
+      background-attachment:fixed;
+      -webkit-font-smoothing:antialiased;
     }
-    button {
-        width: 100%;
-        padding: 10px;
-        background-color: #45a049;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
+
+    /* dim overlay for better contrast */
+    .bg-overlay{
+      position:fixed;
+      inset:0;
+      background: linear-gradient(0deg, rgba(0,0,0,0.20), rgba(0,0,0,0.12));
+      pointer-events:none;
+      z-index:0;
     }
-    button :hover {
-    background-color: #45a049;
-    color: #fff;
+
+    /* ---------- Card ---------- */
+    .card {
+      position:relative;
+      z-index:1;
+      width:100%;
+      max-width:640px;
+      border-radius:var(--radius);
+      padding:28px;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(16, 30, 24, 0.06);
+      backdrop-filter: blur(6px) saturate(110%);
+      display:block;
+      transition: transform .28s ease, box-shadow .28s ease;
     }
-    </style>
-</head>  
-<body>   
-<div class="form"> 
-    <h3>REGISTER</h3>
-    <img src="{% static 'images/logo.png' %}" alt="Logo" width="150" height="90">
-    {% if error_message %}
-        <p class="error">{{ error_message }}</p>
-    {% endif %}
-    <form action="" method=POST>
-        {% csrf_token %}
-        <label for ="username">User Name</label>
-        <input type="text" placeholder="Enter your username here" name='username'required> <br>
+    .card:hover{ transform: translateY(-6px); }
 
-        <label for="fullname"> Full Name</label>
-        <input type="text" placeholder="Enter your Fullname here" name='full_name'required> <br>
+    /* top area */
+    .top {
+      display:flex;
+      align-items:center;
+      gap:18px;
+      justify-content:center;
+      margin-bottom:12px;
+      flex-direction:column;
+    }
+    .top img{ width:86px; height:86px; object-fit:contain; }
+    .title{
+      font-size:28px;
+      color:var(--accent-1);
+      font-weight:700;
+      letter-spacing:0.2px;
+      margin:6px 0 0;
+    }
+    .subtitle{
+      color:var(--muted);
+      font-size:14px;
+      margin-top:6px;
+      text-align:center;
+    }
 
-        <label for="email">Email</label>
-        <input type="email"placeholder="Valid Email" name='email'required> <br>
+    /* form grid */
+    .form-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:16px 20px;
+      margin-top:18px;
+    }
 
-        <label for="password">Password</label>
-        <input type="Password" placeholder="Create a Strong Password" name='password1'required> <br>
+    /* single column fallback (mobile) */
+    @media (max-width:720px){
+      .form-grid{ grid-template-columns: 1fr; padding:0; }
+      .card{ padding:22px; max-width:420px; }
+    }
 
-        <label for="password">Password</label>
-        <input type="Password" placeholder="Repeat your Password" name='password2'required> <br>
+    /* input group */
+    .field {
+      position:relative;
+      display:flex;
+      flex-direction:column;
+    }
+    .label{
+      font-size:13px;
+      color:#254136;
+      font-weight:600;
+      margin-bottom:6px;
+    }
 
-        <button type="submit">Submit</button> <br>
+    .input-wrap{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      border-radius:10px;
+      padding:8px 12px;
+      background:#fff;
+      border:1px solid rgba(15,118,110,0.10);
+      transition: box-shadow .18s ease, border-color .18s ease;
+    }
+    .input-wrap:focus-within{
+      box-shadow: 0 8px 26px rgba(16,165,140,0.08);
+      border-color: rgba(16,165,140,0.22);
+    }
 
-        <p>Already have an account <a href="{% url 'authentication:login' %}">login</a></p>
+    .input-wrap i { color: var(--accent-1); font-size:18px; flex:0 0 26px; text-align:center; opacity:0.95; }
+    .input-wrap input{
+      border:0;
+      outline:0;
+      width:100%;
+      font-size:15px;
+      padding:10px 6px;
+      background:transparent;
+      color:#0b332b;
+    }
 
+    /* full-width group (use grid-column) */
+    .full{ grid-column: 1 / -1; }
 
+    /* submit */
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-top:18px;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:12px 18px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      text-decoration:none;
+      border:0;
+    }
+    .btn-primary{
+      background: linear-gradient(90deg,var(--accent-1), var(--accent-2));
+      color:white;
+      box-shadow: 0 12px 30px rgba(16,165,140,0.14);
+      min-width:220px;
+      flex:1;
+    }
+    .btn-ghost{
+      background:transparent;
+      color:var(--accent-1);
+      border:1px solid rgba(15,118,110,0.08);
+      min-width:140px;
+    }
+
+    /* small help */
+    .help {
+      width:100%;
+      text-align:center;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .help a{ color:var(--accent-1); font-weight:600; text-decoration:none; }
+
+    /* password utilities */
+    .pwd-toggle{
+      border:0;
+      background:transparent;
+      cursor:pointer;
+      color:var(--accent-1);
+      font-size:18px;
+      padding:6px;
+      margin-left:6px;
+    }
+
+    /* password strength hint */
+    .pw-hint{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:6px;
+    }
+
+    /* error message */
+    .msg-error{
+      background: rgba(255, 62, 62, 0.06);
+      color:#9b1d1d;
+      padding:10px 12px;
+      border-radius:8px;
+      font-weight:600;
+      margin-top:8px;
+      text-align:center;
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-overlay" aria-hidden="true"></div>
+
+  <div class="card" role="main" aria-labelledby="reg-title">
+    <div class="top">
+      <!-- new logo image - replace the src if you host locally -->
+      <img src="https://static.vecteezy.com/system/resources/thumbnails/045/593/283/small/farm-logo-symbol-illustration-design-free-vector.jpg" alt="AgriHub logo">
+      <div class="title" id="reg-title">Create your AgriHub account</div>
+      <div class="subtitle">Get started — manage employees, crops, livestock and machinery</div>
+    </div>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if error_message %}
+        <div class="msg-error">{{ error_message }}</div>
+      {% endif %}
+
+      <div class="form-grid">
+        <!-- username -->
+        <div class="field">
+          <label class="label">User Name</label>
+          <div class="input-wrap">
+            <i class='bx bx-user'></i>
+            <input name="username" type="text" placeholder="Choose a username" required autocomplete="username">
+          </div>
+        </div>
+
+        <!-- fullname -->
+        <div class="field">
+          <label class="label">Full Name</label>
+          <div class="input-wrap">
+            <i class='bx bx-id-card'></i>
+            <input name="fullname" type="text" placeholder="Your full name" required autocomplete="name">
+          </div>
+        </div>
+
+        <!-- email (full width) -->
+        <div class="field full">
+          <label class="label">Email</label>
+          <div class="input-wrap">
+            <i class='bx bx-envelope'></i>
+            <input name="email" type="email" placeholder="name@domain.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <!-- password -->
+        <div class="field">
+          <label class="label">Password</label>
+          <div class="input-wrap">
+            <i class='bx bx-lock-alt'></i>
+            <input id="pwd1" name="password1" type="password" placeholder="Create a strong password" required autocomplete="new-password">
+            <button type="button" class="pwd-toggle" onclick="togglePwd('pwd1','icon1')" aria-label="Toggle password">
+              <i id="icon1" class='bx bx-show'></i>
+            </button>
+          </div>
+          <div class="pw-hint" id="pw-hint">Use at least 8 characters, including numbers & letters.</div>
+        </div>
+
+        <!-- confirm password -->
+        <div class="field">
+          <label class="label">Confirm Password</label>
+          <div class="input-wrap">
+            <i class='bx bx-lock'></i>
+            <input id="pwd2" name="password2" type="password" placeholder="Repeat your password" required autocomplete="new-password">
+            <button type="button" class="pwd-toggle" onclick="togglePwd('pwd2','icon2')" aria-label="Toggle password">
+              <i id="icon2" class='bx bx-show'></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- submit group full width -->
+        <div style="grid-column:1/-1; display:flex; flex-direction:column; gap:10px;">
+          <div class="actions">
+            <button type="submit" class="btn btn-primary">Create account</button>
+            <a class="btn btn-ghost" href="{% url 'authentication:login' %}">Already have account</a>
+          </div>
+          <div class="help">By creating an account you agree to our <a href="#">Terms</a>.</div>
+        </div>
+      </div>
     </form>
-</div>  
-</body>  
-</html> 
+  </div>
+
+<script>
+  // toggle password visibility
+  function togglePwd(fieldId, iconId){
+    const f = document.getElementById(fieldId);
+    const icon = document.getElementById(iconId);
+    if(!f) return;
+    if(f.type === 'password'){ f.type = 'text'; icon.className = 'bx bx-hide'; }
+    else { f.type = 'password'; icon.className = 'bx bx-show'; }
+  }
+
+  // small live password strength hint (very lightweight)
+  const pwd1 = document.getElementById('pwd1');
+  const hint = document.getElementById('pw-hint');
+  if(pwd1 && hint){
+    pwd1.addEventListener('input', () => {
+      const v = pwd1.value;
+      let score = 0;
+      if(v.length >= 8) score++;
+      if(/[A-Z]/.test(v)) score++;
+      if(/[0-9]/.test(v)) score++;
+      if(/[^A-Za-z0-9]/.test(v)) score++;
+      if(score <= 1){ hint.textContent = 'Weak — try at least 8+ characters.'; hint.style.color = '#b02a2a'; }
+      else if(score == 2){ hint.textContent = 'Fair — add numbers / symbols.'; hint.style.color = '#b58101'; }
+      else if(score >= 3){ hint.textContent = 'Strong password'; hint.style.color = '#0b7a52'; }
+    });
+  }
+</script>
+</body>
+</html>

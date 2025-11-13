@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+
 
 
 # Create your views here.
@@ -245,18 +247,20 @@ def Show_machinery(request):
 
 
 def Add_machinery(request):
-    if request.method=='POST':
-        form = MachineryForm(request.POST)
+    if request.method == 'POST':
+        form = MachineryForm(request.POST, request.FILES or None)
         if form.is_valid():
-            machinery= form.save(commit=False)
-            machinery.user =request.user
-            form.save()
+            machinery = form.save(commit=False)
+            machinery.user = request.user
+            machinery.save()
             return redirect("homepage:show-machinery")
-        
+        else:
+            print("FORM ERRORS:", form.errors)
+            return render(request, "homepage/addmachinery.html", {"form": form})
     else:
         form = MachineryForm()
+        return render(request, "homepage/addmachinery.html", {"form": form})
 
-        return render(request,"homepage/addmachinery.html", {"form":form})
 
 
 def Delete_machinery(request,Number_plate):
@@ -268,18 +272,20 @@ def Delete_machinery(request,Number_plate):
     return render(request,"homepage/deletemachinery.html", {"machinery":machinery})
 
 
-def Update_machinery(request,Number_plate):
-    machinery=Machinery.objects.get(Number_plate=Number_plate)
-    form = MachineryForm(request.POST, instance=machinery)
-
-    if form.is_valid():
-        form.save()
-        return redirect("homepage:show-machinery")
-    
+def Update_machinery(request, Number_plate):
+    machinery = get_object_or_404(Machinery, Number_plate=Number_plate)
+    if request.method == 'POST':
+        form = MachineryForm(request.POST, request.FILES or None, instance=machinery)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Machinery updated.")
+            return redirect("homepage:show-machinery")
+        else:
+            messages.error(request, "Please correct the errors below.")
+            return render(request, "homepage/updatemachinery.html", {"form": form, "machinery": machinery})
     else:
-        print(form.errors)
-    
-    return render(request, "homepage/updatemachinery.html", {'machinery':machinery})
+        form = MachineryForm(instance=machinery)
+        return render(request, "homepage/updatemachinery.html", {"form": form, "machinery": machinery})
 
 
 def Show_machinery_activities(request,Number_plate):

@@ -1,130 +1,292 @@
-{%extends 'homepage/base.html'%}
-{%block content%}
+{% extends 'homepage/base.html' %}
+{% block content %}
 <head>
-    <title>Milk Production</title>
-<style>
-
+  <title>Milk Production</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    /* Page background */
     body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-      }
-  
-      h1 {
-        color: #333;
-        text-align: center;
-      }
-  
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-      }
-  
-      th,
-      td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-      }
-  
-      th {
-        background-color: #4caf50;
-        color: white;
-      }
-  
-      tr:nth-child(even) {
-        background-color: #f2f2f2;
-      }
-  
-      .update-link,
-      .delete-link {
-        display: inline-block;
-        padding: 5px 10px;
-        text-decoration: none;
-        color: #fff;
-        border-radius: 3px;
-        margin-right: 5px;
-      }
-  
-      .update-link {
-        background-color: #3498db;
-      }
-  
-      .delete-link {
-        background-color: #e74c3c;
-      }
-  
-      .add-button {
-        display: inline-block;
-        padding: 10px;
-        background-color: #4caf50;
-        color: white;
-        text-decoration: none;
-        border-radius: 3px;
-        margin-top: 20px;
-      }
+      margin: 0;
+      font-family: "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(180deg, #f3f7f6 0%, #eef3f2 40%, #f7faf9 100%);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-     h3{
+    /* Optional full-width subtle background image (uncomment to use)
+    :root { --bg-url: url('https://t3.ftcdn.net/jpg/00/55/77/44/360_F_55774465_rYM3C4B2eROfNQcVUpHlx9EOPDSYJw20.jpg'); }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: var(--bg-url);
+      background-size: cover;
+      background-position: center;
+      opacity: 0.08;
+      z-index: 0;
+      pointer-events: none;
+    }
+    */
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 36px auto 80px;
+      padding: 0 20px;
+    }
+
+    /* Page title / hero */
+    .hero {
+      margin-bottom: 24px;
       text-align: center;
-     }
-  
-</style>
+    }
+    .hero h1 {
+      font-size: 34px;
+      color: #23343a;
+      margin: 12px 0;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+    .hero .sub {
+      color: #61707a;
+      font-size: 14px;
+    }
+
+    /* Card */
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.92));
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(20,40,40,0.08);
+      padding: 22px;
+      border: 1px solid rgba(20,40,40,0.04);
+    }
+
+    /* Header row (table title + add button) */
+    .card-header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .card-header h2 {
+      margin:0;
+      font-size:20px;
+      color:#15373a;
+      font-weight:700;
+    }
+    .add-btn {
+      background: linear-gradient(180deg,#26b04a,#1f9d43);
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow: 0 6px 16px rgba(37,137,81,0.16);
+      text-decoration:none;
+    }
+    .add-btn:hover { transform:translateY(-2px); }
+
+    /* Responsive table container with shadow */
+    .table-wrap {
+      overflow: auto;
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px;
+      margin-top: 6px;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,0.02);
+    }
+
+    table.milk {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px; /* allow horizontal scroll on small screens */
+    }
+
+    table.milk thead th {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(180deg,#2fa04d,#1f8a3f);
+      color: #fff;
+      padding: 12px 14px;
+      text-align:left;
+      font-weight:700;
+      font-size:14px;
+      border-bottom: 2px solid rgba(255,255,255,0.08);
+    }
+
+    table.milk tbody td {
+      padding: 14px;
+      border-bottom: 1px solid #eef2f4;
+      color:#29363a;
+      vertical-align: middle;
+    }
+
+    table.milk tbody tr:nth-child(even) td {
+      background: #fbfdfb;
+    }
+
+    /* Numerics align right */
+    .num { text-align: right; font-feature-settings: "tnum"; }
+
+    /* Actions */
+    .actions { display:flex; gap:8px; align-items:center; }
+    .btn-update {
+      display:inline-block;
+      background:#2f8fdd;
+      color:#fff;
+      padding:8px 10px;
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:600;
+      transition: .15s;
+    }
+    .btn-update:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(47,143,221,0.12); }
+
+    .btn-delete {
+      display:inline-block;
+      background:#ef4b46;
+      color:#fff;
+      padding:8px 10px;
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:600;
+      transition: .15s;
+    }
+    .btn-delete:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(239,75,70,0.12); }
+
+    /* Charts area */
+    .charts {
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 26px;
+      margin-top: 32px;
+      align-items:start;
+    }
+    .chart-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(20,40,40,0.04);
+      border: 1px solid rgba(0,0,0,0.03);
+      text-align: center;
+    }
+    .chart-card h3 { margin:0 0 12px; color:#183033; font-size:16px; font-weight:700; }
+
+    .chart-card img {
+      width: 100%;
+      max-width: 100%;
+      height: 360px;
+      object-fit: contain;
+      border-radius:6px;
+      background: #fff;
+    }
+
+    /* Floating summary badge in hero */
+    .summary-badge {
+      display:inline-block;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      color: #0ea5a0;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-weight: 800;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 8px 20px rgba(13,66,63,0.06);
+    }
+
+    /* Responsive */
+    @media (max-width: 980px) {
+      .charts { grid-template-columns: 1fr; }
+      table.milk { min-width: 720px; }
+      .card { padding: 16px; }
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 22px; }
+      .card-header { flex-direction: column; align-items:flex-start; gap:10px; }
+      .add-btn { align-self:flex-end; }
+    }
+
+  </style>
 </head>
-<body>
-    <h1>Milk production for the year {{selected_year}} and the {{selected_month}} month </h1>
 
-
-
-    <table>
-        <thead>
-            <tr>
-
-              <th>Day</th>
-              <th>Number of Animals</th>
-              <th>Morning Production</th>
-              <th>Midday Production</th>
-              <th>Evening Production</th>
-              <th>Total Production</th>
-              <th>Morning Consumption</th>
-              <th>Evening Consumption</th>
-              <th>Total Consumption</th>
-              <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in milk_production_records %}
-            <tr>
-              <td>{{ record.Day }}</td>
-              <td>{{ record.Livestock_number }}</td>
-              <td>{{ record.Morning_production }}</td>
-              <td>{{ record.Midday_production }}</td>
-              <td>{{ record.Evening_production }}</td>
-              <td>{{ record.Total_production}}</td>
-              <td>{{ record.Morning_consumption}}</td>
-              <td>{{ record.Evening_consumption}}</td>
-              <td>{{ record.Total_consumption}}</td>
-
-                <td>
-                <a href="{% url 'homepage:update-milkproductionbymonth' selected_year=selected_year selected_month=selected_month Day=record.Day%}" class="update-link">update</a>
-                <a href="{% url 'homepage:delete-milkproductionbymonth' selected_year=selected_year selected_month=selected_month Day=record.Day%}"class="delete-link">Delete</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{% url 'homepage:add-milkproductionbymonth' selected_year=selected_year selected_month=selected_month %}" class="add-button">Add</a>
-    
-    <div>
-      <h3>Milk Production vs Day</h3>
-      <img src="data:image/png;base64,{{ image_base64_production }}" alt="Milk Production vs Day">
+<div class="container">
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Milk production for the year {{ selected_year }} and the {{ selected_month }} month</h1>
+    <div class="sub">
+      <span class="summary-badge">{{ milk_production_records.count }} records</span>
+    </div>
   </div>
 
-  <div>
-    <h3>Total Consumption vs Day</h3>
-    <img src="data:image/png;base64,{{ image_base64_consumption }}" alt="Total Consumption vs Day">
+  <!-- CARD -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Production Records</h2>
+      <a href="{% url 'homepage:add-milkproductionbymonth' selected_year=selected_year selected_month=selected_month %}" class="add-btn">+ Add entry</a>
+    </div>
+
+    <div class="table-wrap">
+      <table class="milk" role="table" aria-label="Milk production table">
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Number of Animals</th>
+            <th class="num">Morning Production</th>
+            <th class="num">Midday Production</th>
+            <th class="num">Evening Production</th>
+            <th class="num">Total Production</th>
+            <th class="num">Morning Consumption</th>
+            <th class="num">Evening Consumption</th>
+            <th class="num">Total Consumption</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in milk_production_records %}
+          <tr>
+            <td>{{ record.Day }}</td>
+            <td>{{ record.Livestock_number }}</td>
+            <td class="num">{{ record.Morning_production }}</td>
+            <td class="num">{{ record.Midday_production }}</td>
+            <td class="num">{{ record.Evening_production }}</td>
+            <td class="num">{{ record.Total_production }}</td>
+            <td class="num">{{ record.Morning_consumption }}</td>
+            <td class="num">{{ record.Evening_consumption }}</td>
+            <td class="num">{{ record.Total_consumption }}</td>
+            <td>
+              <div class="actions">
+                <a class="btn-update" href="{% url 'homepage:update-milkproductionbymonth' selected_year=selected_year selected_month=selected_month Day=record.Day %}">Update</a>
+
+                <form method="post" action="{% url 'homepage:delete-milkproductionbymonth' selected_year=selected_year selected_month=selected_month Day=record.Day %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-delete" onclick="return confirm('Delete this record?');">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="10" style="text-align:center; padding:24px;">No records found for this month.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts">
+      <div class="chart-card">
+        <h3>Milk Production vs Day</h3>
+        <img src="data:image/png;base64,{{ image_base64_production }}" alt="Milk Production vs Day">
+      </div>
+
+      <div class="chart-card">
+        <h3>Total Consumption vs Day</h3>
+        <img src="data:image/png;base64,{{ image_base64_consumption }}" alt="Total Consumption vs Day">
+      </div>
+    </div>
+  </div>
 </div>
 
-</body>
-{%endblock%}
+{% endblock %}
